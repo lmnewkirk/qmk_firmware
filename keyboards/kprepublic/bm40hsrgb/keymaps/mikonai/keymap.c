@@ -27,7 +27,7 @@
 #define KC_VAI RGB_VAI
 
 //define layers
-enum layers {BASE, MEDR, NAVR, NSSL, NSL, FUNL, GAME, SECGAME};
+enum layers {BASE, MEDR, NAVR, NSSL, NSL, FUNL, MIDI};
 
 enum custom_keycodes {
   CMD_TAB = SAFE_RANGE,
@@ -66,17 +66,19 @@ void matrix_scan_user(void) {
 }
 
 //layer led colors
-void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-  HSV hsv = {0, 255, 40};
+void rgb_matrix_indicators_user(void) {
 
-  for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-    if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+//void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+  //HSV hsv = {0, 255, 40};
+
+//  for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+  //  if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
         //rgb_matrix_set_color(i, 0, 0, 0);
-    }
+   // }
 //    if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT)) {
 //        rgb_matrix_set_color(i, RGB_AZURE);
 //    }
-  }
+ // }
 
   //capslock
   if (host_keyboard_led_state().caps_lock) {
@@ -90,19 +92,21 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
   //nav layer
   if (IS_LAYER_ON(NAVR)) {
-    //for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-      //if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-    // rgb_matrix_set_color(i, RGB_TEAL); } }
-    hsv = {255, 128, 128};
-  }
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+     rgb_matrix_set_color(i, RGB_TEAL); } }
+   // hsv = {255, 128, 128};
+  }// else {
+   //   hsv = {30, 255, 255};
+ // }
 
-   RGB rgb = hsv_to_rgb(hsv);
+   //RGB rgb = hsv_to_rgb(hsv);
 
-    for (uint8_t i = led_min; i <= led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], 0x01)) { // 0x01 == LED_FLAG_MODIFIER
-            rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-        }
-    }
+    //for (uint8_t i = led_min; i <= led_max; i++) {
+//      if (HAS_FLAGS(g_led_config.flags[i], 0x01)) { // 0x01 == LED_FLAG_MODIFIER
+  //          rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+    //    }
+   // }
 // media layer
   if (IS_LAYER_ON(MEDR)) {
     for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
@@ -117,8 +121,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
       }
     }
   }
-
-  //nsl layer
+//
+//  //nsl layer
   if (IS_LAYER_ON(NSL)) {
     for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
       if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
@@ -135,28 +139,26 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
       }
     }
   }
-
-  //game layer
-  if (IS_LAYER_ON(GAME)) {
-    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-            rgb_matrix_set_color(i, 0, 204, 20);
-      }
-    }
-  }
-
-  //secgame layer
-  if (IS_LAYER_ON(SECGAME)) {
-    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-            rgb_matrix_set_color(i, 255, 0, 20);
-      }
-    }
-  }
-
+//
+//  //game layer
+//  if (IS_LAYER_ON(GAME)) {
+//    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+//            rgb_matrix_set_color(i, 0, 204, 20);
+//      }
+//    }
+//  }
+//
+//  //secgame layer
+//  if (IS_LAYER_ON(SECGAME)) {
+//    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+//            rgb_matrix_set_color(i, 255, 0, 20);
+//      }
+//    }
+//  }
+//
 };
-
-
 
 
 
@@ -174,6 +176,11 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 #define KC_TD(TD_VARIABLE) TD(TD_VARIABLE)
 
+
+
+
+
+
 //--------------------------------------------------------------------------------------------------------
 
 //base
@@ -190,13 +197,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
 //layers
-// a number of the keys here are blank in the documentation, but defined here. not sure what they're intended for. overwriting with numpad-like config from numbers layer, but with mod for switching desktops in regolith
-// Also moved arrow keys over one to line up with vim shortcuts, added shortcut to scratchpad in new empty spot on right. Also also added mod+arrow keys on the row above for switching between windows in i3-like wms. Added button to send window to scratchpad, as well.  
   [NAVR] = LAYOUT_planck_mit(
     KC_LALT,              KC_RST,            G(KC_7),             G(KC_8),              G(KC_9),            G(KC_A),             G(KC_LEFT),        G(KC_DOWN),     G(KC_UP),           G(KC_RIGHT),           G(C(KC_M)),     KC_LALT,
     KC_LSFT,              G(S(C(KC_F1))),    G(KC_4),    G(KC_5),     G(KC_6),   KC_CLCK,             KC_LEFT,           KC_DOWN,           KC_UP,           KC_RGHT,             G(C(KC_A)),           KC_LSFT,
     KC_LCTL,              KC_NO,             G(KC_1),           G(KC_2),              G(KC_3),   KC_NO,             KC_INS,            KC_HOME,           KC_PGDN,           KC_PGUP,           KC_END,            KC_LCTL,
-    TG(GAME),             KC_NO,             KC_NO,             KC_NO,              KC_NO,                     KC_ENT,                      KC_BSPC,           KC_DEL,            KC_LGUI,             C(G(KC_LEFT)),     C(G(KC_RIGHT))
+    TG(MIDI),             KC_NO,             KC_NO,             KC_NO,              KC_NO,                     KC_ENT,                      KC_BSPC,           KC_DEL,            KC_LGUI,             C(G(KC_LEFT)),     C(G(KC_RIGHT))
   ),
   [MEDR] = LAYOUT_planck_mit(
     KC_LALT,              KC_RST,            KC_NO,             KC_NO,              KC_NO,            KC_NO,             KC_TOG,            KC_MOD,            KC_HUI,            KC_SAI,            KC_VAI,            KC_LALT,
@@ -222,16 +227,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO,                KC_NO,             KC_UNDS,           KC_GT,              KC_RPRN,                   KC_NO,                       KC_BTN1,            KC_BTN3,          KC_BTN2,           KC_NO,             KC_NO
   ),
   // swap enter and space
-  [GAME] = LAYOUT_planck_mit(
-    KC_ESC,               KC_Q,              KC_W,              KC_E,               KC_R,             KC_T,              KC_Y,              KC_U,               KC_I,             KC_O,              KC_P,              TG(GAME),
-    KC_LALT,              KC_A,              KC_S,              KC_D,               KC_F,             KC_G,              KC_H,              KC_J,               KC_K,             KC_L,              KC_QUOT,           KC_LSFT,
-    KC_LSFT,              KC_Z,              KC_X,              KC_C,               KC_V,             KC_B,              KC_N,              KC_M,               KC_COMM,          KC_DOT,            KC_SLSH,           KC_LCTL,
-    KC_LCTL,              A(KC_TAB),         MO(SECGAME),       KC_TAB,             LT(SECGAME, KC_ENT),             KC_SPC,                KC_BSPC,            KC_DEL,           KC_MPRV,           KC_MPLY,           KC_MNXT
-  ),
-  [SECGAME] = LAYOUT_planck_mit(
-    KC_1,                 KC_2,              KC_3,              KC_4,               KC_5,             KC_6,              KC_7,              KC_8,               KC_9,             KC_0,              KC_MINS,           KC_EQL,
-    KC_F1,                KC_F2,             KC_F3,             KC_F4,              KC_F5,            KC_F6,             KC_F7,             KC_F8,              KC_F9,            KC_F10,            KC_F11,            KC_F12,
-    KC_LEFT,              KC_DOWN,           KC_UP,             KC_RGHT,            KC_NO,            KC_NO,             KC_NO,             KC_P1,              KC_P2,            KC_P3,             KC_P4,             KC_P5,
-    KC_LEFT,              KC_DOWN,           KC_UP,             KC_RGHT,            KC_NO,                     KC_NO,                       KC_P6,              KC_P7,            KC_P8,             KC_P9,             KC_P0
+//  [GAME] = LAYOUT_planck_mit(
+//    KC_ESC,               KC_Q,              KC_W,              KC_E,               KC_R,             KC_T,              KC_Y,              KC_U,               KC_I,             KC_O,              KC_P,              TG(GAME),
+//    KC_LALT,              KC_A,              KC_S,              KC_D,               KC_F,             KC_G,              KC_H,              KC_J,               KC_K,             KC_L,              KC_QUOT,           KC_LSFT,
+//    KC_LSFT,              KC_Z,        KC_X,            KC_C,               KC_V,             KC_B,              KC_N,              KC_M,               KC_COMM,          KC_DOT,            KC_SLSH,           KC_LCTL,
+//    KC_LCTL,              A(KC_TAB),         MO(SECGAME),       KC_TAB,             LT(SECGAME, KC_ENT),             KC_SPC,                KC_BSPC,            KC_DEL,           KC_MPRV,           KC_MPLY,           KC_MNXT
+//  ),
+//  [SECGAME] = LAYOUT_planck_mit(
+//    KC_1,                 KC_2,              KC_3,              KC_4,               KC_5,             KC_6,              KC_7,              KC_8,               KC_9,             KC_0,              KC_MINS,           KC_EQL,
+//    KC_F1,                KC_F2,             KC_F3,             KC_F4,              KC_F5,            KC_F6,             KC_F7,             KC_F8,              KC_F9,            KC_F10,            KC_F11,            KC_F12,
+//    KC_LEFT,              KC_DOWN,           KC_UP,             KC_RGHT,            KC_NO,            KC_NO,             KC_NO,             KC_P1,              KC_P2,            KC_P3,             KC_P4,             KC_P5,
+//    KC_LEFT,              KC_DOWN,           KC_UP,             KC_RGHT,            KC_NO,                     KC_NO,                       KC_P6,              KC_P7,            KC_P8,             KC_P9,             KC_P0
+//  ),
+  [MIDI] = LAYOUT_planck_mit(
+      MI_C_4, MI_Cs_4, MI_D_4, MI_Ds_4, MI_E_4, MI_F_4, MI_Fs_4, MI_G_4, MI_Gs_4, MI_A_4, MI_As_4, MI_B_4,
+      MI_C_3, MI_Cs_3, MI_D_3, MI_Ds_3, MI_E_3, MI_F_3, MI_Fs_3, MI_G_3, MI_Gs_3, MI_A_3, MI_As_3, MI_B_3,
+      MI_C_2, MI_Cs_2, MI_D_2, MI_Ds_2, MI_E_2, MI_F_2, MI_Fs_2, MI_G_2, MI_Gs_2, MI_A_2, MI_As_2, MI_B_2,
+      MI_C_1, MI_Cs_1, MI_OCTD, MI_OCTU, MI_ALLOFF, MI_VEL_7, MI_VELD, MI_VELU, MI_Gs_1, MI_TOG,  TG(MIDI)
   )
+  
 };
