@@ -27,11 +27,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MASTER_LEFT
 // #define MASTER_RIGHT
 // #define EE_HANDS
+#define SPLIT_LAYER_STATE_ENABLE
+
+// combo keys
+#define COMBO_VARIABLE_LEN
+#define COMBO_TERM 50
+
 
 //#define TAPPING_FORCE_HOLD
 //#define TAPPING_TERM 100
 
 #ifdef RGBLIGHT_ENABLE
+    #define DRIVER_LED_TOTAL 54
     #define RGBLIGHT_EFFECT_BREATHING
     #define RGBLIGHT_EFFECT_RAINBOW_MOOD
     #define RGBLIGHT_EFFECT_RAINBOW_SWIRL
