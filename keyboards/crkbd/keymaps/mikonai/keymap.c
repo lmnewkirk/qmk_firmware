@@ -22,10 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "split_util.h"
 // a bunch of BS to try to get rgb stuff to work which wasn't otherwise
-extern rgblight_config_t rgblight_config;
-#include "rgblight.h"
-#include "rgb_matrix.h"
-//#include "../../../../quantum/rgb_matrix/rgb_matrix.h"
+//extern rgblight_config_t rgblight_config;
+//#include "rgblight.h"
+//#include "rgb_matrix.h"
+//#include "~/qmk_firmware/quantum/rgb_matrix/rgb_matrix.h"
 
 
 
@@ -36,14 +36,14 @@ enum {
 
 
 // my function for layer lights
-void lightUp(int leds[], HSV myColor, int ledsLen) {
-    RGB rgb = hsv_to_rgb(myColor);
-    int i = 0;
-    while (i < ledsLen) {
-   rgb_matrix_set_color(leds[i], rgb.r, rgb.g, rgb.b);
-   i++;
-    }; 
-}
+//void lightUp(int leds[], HSV myColor, int ledsLen) {
+//    RGB rgb = hsv_to_rgb(myColor);
+//    int i = 0;
+//    while (i < ledsLen) {
+//   rgb_matrix_set_color(leds[i], rgb.r, rgb.g, rgb.b);
+//   i++;
+//    }; 
+//}
 
 
 
@@ -84,29 +84,183 @@ enum layers {BASEL, MEDR, NUM, NAVR, SYM};
 //}
 //}
 
-//Let's just try the tutorial bit:
-void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    HSV hsv = {0, 255, 255};
+//Per key lights from bermeo
+#ifdef RGB_MATRIX_ENABLE
+bool rgb_matrix_indicators_user(void) {
+    switch (get_highest_layer(layer_state)) {
+        case BASEL:;
+            mod_state  = get_mods();
+            for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+                if (mod_state & MOD_MASK_SHIFT) {
+                    rgb_matrix_set_color(52, 255, 255, 255);
+                    rgb_matrix_set_color(i, 255, 150, 0);
+                } else if (mod_state & MOD_MASK_GUI || mod_state & MOD_MASK_CTRL) {
+                    rgb_matrix_set_color(15, 255, 0, 0);
+                    switch (i) {
+                        case 0 ... 5:                            // underglow left side
+                        case 9:                                  // cmd + T white (new tab)
+                        case 11:                                 // cmd + F white (find)
+                        case 18:                                 // cmd + W white (close tab)
+                        case 19:                                 // cmd + S white (save)
+                        case 21:                                 // cmd + Z white (undo)
+                        case 22:                                 // cmd + A white (select all)
+                        case 27 ... 32:                          // underglow right side
+                        case 43:                                 // cmd + K white (comment for desktop remote)
+                        case 48:                                 // cmd + / white (comment line)
+                            rgb_matrix_set_color(i, 255, 255, 255); // white
+                            break;
+                        case 6:                                  // space bar off
+                        case 24 ... 26:                          // left column off
+                        case 33:                                 // backspace off
+                        case 41:                                 // shift off
+                        case 51 ... 53:                          // right column off
+                            rgb_matrix_set_color(i, 0, 0, 0);    //off
+                            break;
+                    }
+                    if (mod_state & MOD_MASK_GUI) {
+                        rgb_matrix_set_color(12, 255, 255, 255); // white V key
+                        rgb_matrix_set_color(15, 255, 255, 255); // white C key
+                        rgb_matrix_set_color(20, 255, 255, 255); // white X key
+                    } else {
+                    }
+                } else if (mod_state & MOD_MASK_ALT) {
+                } else {
+                    rgb_matrix_set_color(14, 0, 0, 0);          // command key off
+                }
+            }
+            rgb_matrix_set_color(13, 23, 181, 255);             // cyan layer
+            rgb_matrix_set_color(40, 255, 33, 0);               // orange layer
+            break;
 
-    if (layer_state_is(layer_state)) {
-        hsv = {130, 255, 255};
-    } else {
-        hsv = {30, 255, 255};
-    }
+        case NUM:;
+            for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+                switch (i) {
+                    case 7:                                     // B key off
+                    case 8:                                     // G key off
+                    case 11:                                    // F key off
+                    case 12:                                    // V key off
+                    case 16:                                    // D key off
+                    case 19 ... 21:                             // S, X, Z keys off
+                    case 25:                                    // tab key off
+                    case 26:                                    // shift key off
+                    case 52 ... 53:                             // right column off
+                        rgb_matrix_set_color(i, 0, 0, 0);       // off
+                        break;
+                    case 15:                                    // Ç key
+                    case 22:                                    // Ã key
+                    case 24:                                    // Launch (F4)
+                    case 40:                                    // Active layer
+                        rgb_matrix_set_color(i, 255, 255, 255); // white
+                        break;
+                    case 13:                                    // active layer
+                        rgb_matrix_set_color(i, 0, 255, 0);     // green
+                        break;
+                    case 42:                                    // , shifted key
+                    case 47 ... 49:                             // . / ; shifted keys
+                        rgb_matrix_set_color(i, 255, 214, 0);   // yellow
+                        break;
+                    default:
+                        rgb_matrix_set_color(i, 255, 33, 0);    // orange
+                }
+            }
+            break;
 
-    if (hsv.v > rgb_matrix_get_val()) {
-        hsv.v = rgb_matrix_get_val();
-    }
-    RGB rgb = hsv_to_rgb(hsv);
+        case NAVR:;
+            for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+                switch (i) {
+                    case 7:                                     // Delete key
+                    case 51:                                    // ESC key
+                        rgb_matrix_set_color(i, 255, 0, 0);     // red
+                        break;
+                    case 12:                                    // V key off
+                    case 15:                                    // C key off
+                    case 20:                                    // X key off
+                    case 21:                                    // Z key off
 
-    for (uint8_t i = led_min; i <= led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], 0x01)) { // 0x01 == LED_FLAG_MODIFIER
-            rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-        }
+                    case 26:                                    // shift key off
+                    case 52 ... 53:                             // right column off
+                        rgb_matrix_set_color(i, 0, 0, 0);       // off
+                        break;
+                    case 11:                                    // Right arrow key
+                    case 13:                                    // Active layer
+                    case 16:                                    // Up arrow key
+                    case 19:                                    // Down arrow key
+                    case 22:                                    // Left arrow key
+                    case 24:                                    // Print
+                        rgb_matrix_set_color(i, 255, 255, 255); // white
+                        break;
+                    case 8:                                     // Enter key
+                    case 40:                                    // Activate Numpad
+                        rgb_matrix_set_color(i, 0, 255, 0);     // green
+                        break;
+                    case 42:                                    // , shifted key
+                    case 47 ... 49:                             // . / ; shifted keys
+                    case 25:                                    // opens emoji dialog (on macOS)
+                        rgb_matrix_set_color(i, 255, 214, 0);   // yellow
+                        break;
+                    default:
+                        rgb_matrix_set_color(i, 23, 181, 255);  // cyan
+                }
+            }
+
+            break;
+
+        case SYM:;
+            for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+                switch (i) {
+                    case 12:                                    // RGB speed-
+                    case 15:                                    // RGB brigthness-
+                    case 20:                                    // RGB saturation-
+                    case 21:                                    // RGB hue-
+                    case 49:                                    // Numpad -
+                    case 51:                                    // Numpad /
+                        rgb_matrix_set_color(i, 255, 0, 0);     // red
+                        break;
+                    case 8 ... 10:                              // G T R off
+                    case 17:                                    // E off
+                    case 18:                                    // W off
+                    case 23:                                    // Q off
+                    case 25:                                    // Tab off
+                    case 26:                                    // LShift off
+                    case 33:                                    // Backspace off
+                    case 35:                                    // H off
+                    case 36:                                    // Y off
+                    case 53:                                    // RShift off
+                        rgb_matrix_set_color(i, 0, 0, 0);       // off
+                        break;
+                    case 6:                                     // Space bar off
+                    case 13:                                    // Return to default layer
+                    case 16:                                    // RGB brigthness+
+                    case 24:                                    // RGB toggle
+                    case 37 ... 47:                             // Numpad numbers
+                    case 52:                                    // Enter key
+                        rgb_matrix_set_color(i, 255, 255, 255); // white
+                        break;
+                    case 11:                                    // RGB speed+
+                    case 19:                                    // RGB saturation+
+                    case 22:                                    // RGB hue+
+                    case 48:                                    // Numpad +
+                        rgb_matrix_set_color(i, 0, 255, 0);     // green
+                        break;
+                    case 34:                                    // . numpad key
+                        rgb_matrix_set_color(i, 255, 214, 0);   // yellow
+                        break;
+                }
+                rgb_matrix_set_color(13, 23, 181, 255);         // Activate cyan layer
+                rgb_matrix_set_color(40, 255, 33, 0);           // Activate orange layer
+                rgb_matrix_set_color(50, 0, 33, 255);           // Numpad *
+                rgb_matrix_set_color(14, 0, 255, 0);            // Green layer active
+            }
     }
+    return false;
+};
+#endif
+
+#ifdef OLED_ENABLE
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    return OLED_ROTATION_270;
 }
-
-
+#endif
 
 
 /* TODO:
@@ -122,7 +276,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_QUOT, KC_RSFT,
    //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RCTL_T(KC_ESC),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  RCTL_T(KC_BSLASH),
+      RCTL_T(KC_ESC),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  RCTL_T(KC_BSLS),
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
             LGUI_T(G(KC_SPC)),   LT(MEDR,KC_TAB),  LT(NAVR,KC_ENT),     KC_SPC,   LT(NUM,KC_BSPC), LT(SYM,KC_RALT)
                                       //`--------------------------'  `--------------------------'
@@ -169,7 +323,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [MEDR] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        RESET, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        QK_BOOTLOADER, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT, KC_MPLY, KC_MUTE,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
