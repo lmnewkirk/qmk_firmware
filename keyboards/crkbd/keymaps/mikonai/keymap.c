@@ -58,6 +58,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 //define layers
 enum layers {BASEL, MEDR, NUM, NAVR, SYM}; 
 
+uint8_t mod_state;
 
 
 // layer lights
