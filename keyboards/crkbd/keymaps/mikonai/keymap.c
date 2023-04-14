@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
-#include <stdio.h>
+//#include <stdio.h>
 #include "split_util.h"
 // a bunch of BS to try to get rgb stuff to work which wasn't otherwise
 //extern rgblight_config_t rgblight_config;
@@ -85,11 +85,22 @@ uint8_t mod_state;
 //}
 //}
 
+
+
+// AtelierForest scheme:
+// red: f22c40    rgb 242 44 64
+// green: 5ab738  rgb 90 183 56
+// gold: d5911a   rgb 219 145 26
+// blue: 407ee7   rgb 64 126 231
+// purple: 6666ea rgb 102 102 234
+// teal: 00ad9c   rgb 0 173 156
+// gray: a8a19f   rgb 168 161 159
+
 //Per key lights from bermeo
 #ifdef RGB_MATRIX_ENABLE
 bool rgb_matrix_indicators_user(void) {
     switch (get_highest_layer(layer_state)) {
-        case BASEL:;
+        case MEDR:
             mod_state  = get_mods();
             for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
                 if (mod_state & MOD_MASK_SHIFT) {
@@ -108,7 +119,7 @@ bool rgb_matrix_indicators_user(void) {
                         case 27 ... 32:                          // underglow right side
                         case 43:                                 // cmd + K white (comment for desktop remote)
                         case 48:                                 // cmd + / white (comment line)
-                            rgb_matrix_set_color(i, 255, 255, 255); // white
+                            rgb_matrix_set_color(i, 219, 145, 26); // white
                             break;
                         case 6:                                  // space bar off
                         case 24 ... 26:                          // left column off
@@ -133,7 +144,7 @@ bool rgb_matrix_indicators_user(void) {
             rgb_matrix_set_color(40, 255, 33, 0);               // orange layer
             break;
 
-        case NUM:;
+        case NUM:
             for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
                 switch (i) {
                     case 7:                                     // B key off
@@ -166,7 +177,7 @@ bool rgb_matrix_indicators_user(void) {
             }
             break;
 
-        case NAVR:;
+        case NAVR:
             for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
                 switch (i) {
                     case 7:                                     // Delete key
@@ -206,7 +217,7 @@ bool rgb_matrix_indicators_user(void) {
 
             break;
 
-        case SYM:;
+        case SYM:
             for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
                 switch (i) {
                     case 12:                                    // RGB speed-
