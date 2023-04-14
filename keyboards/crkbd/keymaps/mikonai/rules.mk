@@ -1,8 +1,7 @@
 MCU = atmega32u4
 BOOTLOADER = atmel-dfu
 MOUSEKEY_ENABLE = yes    # Mouse keys
-RGBLIGHT_ENABLE = no    # Enable WS2812 RGB underlight.
-RGB_MATRIX_ENABLE = yes
+RGBLIGHT_ENABLE = yes    # Enable WS2812 RGB underlight.
 NKRO_ENABLE = no
 #RGB_MATRIX_DRIVER = WS2812
 #SPLIT_KEYBOARD = yes
