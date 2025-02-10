@@ -57,17 +57,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 // commented out to see if it works without it
-//void matrix_scan_user(void) {
-//  if (is_cmd_tab_active) {
-//    if (timer_elapsed(cmd_tab_timer) > 500) {
-//      unregister_code(KC_LCTL);
-//      is_cmd_tab_active = false;
-//    }
-//  }
-//}
+void matrix_scan_user(void) {
+  if (is_cmd_tab_active) {
+    if (timer_elapsed(cmd_tab_timer) > 500) {
+      unregister_code(KC_LCTL);
+      is_cmd_tab_active = false;
+    }
+  }
+}
 
 //layer led colors; commented out for troubleshooting
-//void rgb_matrix_indicators_user(void) {
+bool rgb_matrix_indicators_user(void) {
 
 //void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
   //HSV hsv = {0, 255, 40};
@@ -81,85 +81,86 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 //    }
  // }
 
-  //capslock; commented for troubleshooting
-//  if (host_keyboard_led_state().caps_lock) {
+  //capslock; 
+  if (host_keyboard_led_state().caps_lock) {
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT)) {
+            rgb_matrix_set_color(i, RGB_WHITE);
+      }
+    }
+   // hsv = {255, 255, 40};
+  }
+
+  //nav layer
+  if (IS_LAYER_ON(NAVR)) {
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+     rgb_matrix_set_color(i, RGB_TEAL); } }
+   // hsv = {255, 128, 128};
+  }// else {
+   //   hsv = {30, 255, 255};
+ // }
+
+   //RGB rgb = hsv_to_rgb(hsv);
+
+    //for (uint8_t i = led_min; i <= led_max; i++) {
+//      if (HAS_FLAGS(g_led_config.flags[i], 0x01)) { // 0x01 == LED_FLAG_MODIFIER
+  //          rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+    //    }
+   // }
+// media layer
+  if (IS_LAYER_ON(MEDR)) {
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+        rgb_matrix_set_color(i, 0, 0, 20); } }
+  }
+  //funl layer
+  if (IS_LAYER_ON(FUNL)) {
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+            rgb_matrix_set_color(i, 255, 0, 20);
+      }
+    }
+  }
+//
+//  //nsl layer
+  if (IS_LAYER_ON(NSL)) {
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+            rgb_matrix_set_color(i, 51, 0, 20);
+      }
+    }
+  }
+
+  //nssl layer
+  if (IS_LAYER_ON(NSSL)) {
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
+      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+            rgb_matrix_set_color(i, 0, 255, 20);
+      }
+    }
+  }
+//
+//  //game layer
+//  if (IS_LAYER_ON(GAME)) {
 //    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT)) {
-//            rgb_matrix_set_color(i, RGB_WHITE);
+//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+//            rgb_matrix_set_color(i, 0, 204, 20);
 //      }
 //    }
-//   // hsv = {255, 255, 40};
 //  }
 //
-//  //nav layer
-//  if (IS_LAYER_ON(NAVR)) {
-//    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-//     rgb_matrix_set_color(i, RGB_TEAL); } }
-//   // hsv = {255, 128, 128};
-//  }// else {
-//   //   hsv = {30, 255, 255};
-// // }
-//
-//   //RGB rgb = hsv_to_rgb(hsv);
-//
-//    //for (uint8_t i = led_min; i <= led_max; i++) {
-////      if (HAS_FLAGS(g_led_config.flags[i], 0x01)) { // 0x01 == LED_FLAG_MODIFIER
-//  //          rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-//    //    }
-//   // }
-//// media layer
-//  if (IS_LAYER_ON(MEDR)) {
-//    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-//        rgb_matrix_set_color(i, 0, 0, 20); } }
-//  }
-//  //funl layer
-//  if (IS_LAYER_ON(FUNL)) {
+//  //secgame layer
+//  if (IS_LAYER_ON(SECGAME)) {
 //    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
 //      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
 //            rgb_matrix_set_color(i, 255, 0, 20);
 //      }
 //    }
 //  }
-////
-////  //nsl layer
-//  if (IS_LAYER_ON(NSL)) {
-//    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-//            rgb_matrix_set_color(i, 51, 0, 20);
-//      }
-//    }
-//  }
 //
-//  //nssl layer
-//  if (IS_LAYER_ON(NSSL)) {
-//    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-//      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-//            rgb_matrix_set_color(i, 0, 255, 20);
-//      }
-//    }
-//  }
-////
-////  //game layer
-////  if (IS_LAYER_ON(GAME)) {
-////    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-////      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-////            rgb_matrix_set_color(i, 0, 204, 20);
-////      }
-////    }
-////  }
-////
-////  //secgame layer
-////  if (IS_LAYER_ON(SECGAME)) {
-////    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; ++i) {
-////      if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-////            rgb_matrix_set_color(i, 255, 0, 20);
-////      }
-////    }
-////  }
-////
-//};
+  return false;
+};
 
 
 
